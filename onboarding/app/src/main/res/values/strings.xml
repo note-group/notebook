@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">editor</string>
+    <!--onboarding-->
+    <string name="onboarding_next_button_description">下一页</string>
+    <string name="onboarding_finish_button_description">最后一页</string>
+    <string name="onboarding_pre_button_description">上一页</string>
+    <string name="onboarding_section_1">快速记录你的任何想法</string>
+    <string name="onboarding_intro_1">支持记录文字、语音、图片以及视频</string>
+    <string name="onboarding_section_2">良好设计，遵循安卓设计规范</string>
+    <string name="onboarding_intro_2">操作方便、流畅，所见即所得</string>
+    <string name="onboarding_section_3">你的笔记在本地，也在云端</string>
+    <string name="onboarding_intro_3">笔记均可选择上传到云端进行保存，也可从云端下载</string>
+    <string name="onboarding_finish_button_description_wait">正在初始化...</string>
+    <!--onboarding end-->
+</resources>
