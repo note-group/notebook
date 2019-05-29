@@ -1,5 +1,7 @@
 package com.example.jishibao;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -7,20 +9,55 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
+import com.example.jishibao.GuestActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
     private List<Item> itemList=new ArrayList<>();
+    private SharedPreferences mShared;
+    private String pass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mShared = getSharedPreferences("share_data", MODE_PRIVATE);
+//        String desc = "共享参数中保存的信息如下：";
+//                 Map<String, Object> mapParam = (Map<String, Object>) mShared.getAll();
+//                 for (Map.Entry<String, Object> item_map : mapParam.entrySet()) {
+//                         String key = item_map.getKey();
+//                         Object value = item_map.getValue();
+//                         if (value instanceof String) {
+//                                 desc = String.format("%s\n　%s的取值为%s", desc, key,
+//                                                 mShared.getString(key, ""));
+//                             } else if (value instanceof Integer) {
+//                                 desc = String.format("%s\n　%s的取值为%d", desc, key, mShared.getInt(key, 0));
+//                             } else if (value instanceof Float) {
+//                                 desc = String.format("%s\n　%s的取值为%f", desc, key, mShared.getFloat(key, 0.0f));
+//                             } else if (value instanceof Boolean) {
+//                                 desc = String.format("%s\n　%s的取值为%b", desc, key, mShared.getBoolean(key, false));
+//                             } else if (value instanceof Long) {
+//                                 desc = String.format("%s\n　%s的取值为%d", desc, key, mShared.getLong(key, 0l));}
+//                 else {
+//                                 desc = String.format("%s\n参数%s的取值为未知类型", desc, key);
+//                             }
+//                    }
+//        Log.d("msg",desc);
+        pass = mShared.getString("gesturePw","");
+        Log.d("msg_pass",pass);
+        if(pass.length()!=0) {
+            setMode(1);
+            Intent intent = new Intent(MainActivity.this,GuestActivity.class);
+            intent.putExtra("mode",1);
+            intent.putExtra("first",1);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_main);
-           initItem();
+        initItem();
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.main_recyclerview);
         StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -37,10 +74,14 @@ public class MainActivity extends AppCompatActivity {
                switch (menuItem.getItemId())
                {
                    case R.id.setting:
+                       showGuestModal(1);
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
                    case R.id.item1:
+                      // showGuestModal(0);
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
                    case R.id.item2:
+//                       showGuestModal(0);
+//                       showGuestModal(1);
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
                    case R.id.item3:
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
@@ -93,4 +134,23 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    public void showGuestModal(int i){
+        Intent intent = new Intent(MainActivity.this,GuestActivity.class);
+        intent.putExtra("mode",i);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+                 super.onActivityResult(requestCode, resultCode, data);
+                 //当otherActivity中返回数据的时候，会响应此方法
+                 //requestCode和resultCode必须与请求startActivityForResult()和返回setResult()的时候传入的值一致。
+                 if(requestCode==1&&resultCode==2)
+                     {
+                         int three=data.getIntExtra("result", 0);
+                         Log.d("msg_result",String.valueOf(three));
+                     }
+             }
+
 }
