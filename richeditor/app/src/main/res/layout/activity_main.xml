@@ -5,6 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="标题"/>
+        <EditText
+            android:id="@+id/title_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+
+            />
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="内容"
+        android:textSize="15dp"
+        />
+
+   <android.support.v7.widget.RecyclerView
+       android:layout_width="match_parent"
+       android:layout_height="75dp"
+       android:id="@+id/image_recycleview"
+       ></android.support.v7.widget.RecyclerView>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+
+        android:id="@+id/btn1"
+        android:text="huoqu"/>
     <net.dankito.richtexteditor.android.RichTextEditor
         android:id="@+id/editor"
         android:layout_width="match_parent"
@@ -18,5 +54,5 @@
         android:layout_height="36dp"
         android:background="@color/colorPrimary"
         />
-    
+
 </LinearLayout>

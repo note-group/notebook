@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/add_audio"
+        android:title="添加音频"/>
+    <item
+        android:id="@+id/add_vidio"
+        android:title="添加视频"/>
+    <item
+        android:id="@+id/add_recording"
+        android:title="录音"
+        />
+    <item
+        android:id="@+id/graffiti_item"
+        android:title="涂鸦"/>
+
+
+</menu>
