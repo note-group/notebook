@@ -21,6 +21,7 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
     private ExpandLockView mLockviewExpand;
     private IndicatorLockView lockviewIndicator;
     private TextView tvMessage;
+    private TextView tipsText;
     private Animation mShakeAnimal;
     private Vibrator mVibrator;
     private int first;
@@ -39,17 +40,20 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
         setContentView(R.layout.password_main);
         mLockviewExpand = (ExpandLockView) findViewById(R.id.lockviewExpand);
         tvMessage = (TextView) findViewById(R.id.tvMessage);
+        tipsText = (TextView) findViewById(R.id.tipsText);
         lockviewIndicator = (IndicatorLockView) findViewById(R.id.lockviewIndicator);
         mVibrator =(Vibrator)getApplication().getSystemService(Service.VIBRATOR_SERVICE); //震动
 //        mLockviewExpand.getPaintL().setStrokeWidth(20); //获取paint 修改连接线段的样式
 //        mLockviewExpand.setLock_trackColor(0xff0000); //给路径设置不同颜色
         //加载动画资源文件
         mShakeAnimal = AnimationUtils.loadAnimation(this, R.anim.shake);
-        Toast.makeText(GuestActivity.this,"手势密码",Toast.LENGTH_SHORT).show();
+        if(mode == 1){
+            tipsText.setText("请输入已有密码");
+        }
+        else{
+            tipsText.setText("请绘制新密码");
+        }
         mLockviewExpand.setActionMode(mode);//set mode  设置手势密码
- //       mLockviewExpand.setActionMode(1);//set mode  验证手势密码
-//        mLockviewExpand.setActionMode(2);//set mode  更换手势密码
-
 
 //        mLockviewExpand.setHiddenTrack(true); //隐藏轨迹和按钮
         mLockviewExpand.setShowError(true); //显示失败视图

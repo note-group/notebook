@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         pass = mShared.getString("gesturePw","");
         Log.d("msg_pass",pass);
         if(pass.length()!=0) {
-            setMode(1);
             Intent intent = new Intent(MainActivity.this,GuestActivity.class);
             intent.putExtra("mode",1);
             intent.putExtra("first",1);
@@ -65,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         NavigationView navigationView=(NavigationView)findViewById(R.id.navigation);
         navigationView.setCheckedItem(R.id.setting);
+        navigationView.setCheckedItem(R.id.update);
+        navigationView.setCheckedItem(R.id.delete);
         navigationView.setCheckedItem(R.id.item1);
         navigationView.setCheckedItem(R.id.item2);
         navigationView.setCheckedItem(R.id.item3);
@@ -74,10 +75,30 @@ public class MainActivity extends AppCompatActivity {
                switch (menuItem.getItemId())
                {
                    case R.id.setting:
-                       showGuestModal(1);
+                       pass = mShared.getString("gesturePw","");
+                       Log.d("msg_pass",pass);
+                       if(pass.length()==0) {
+                           showGuestModal(0);
+                       }else{Toast.makeText(MainActivity.this,"手势密码已存在",Toast.LENGTH_SHORT).show();}
+                       Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
+                   case R.id.update:
+                       pass = mShared.getString("gesturePw","");
+                       Log.d("msg_pass",pass);
+                       if(pass.length()!=0) {
+                           showGuestModal(0);
+                           showGuestModal(1);
+                       }
+                       else{Toast.makeText(MainActivity.this,"当前无手势密码",Toast.LENGTH_SHORT).show();}
+                       Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
+                   case R.id.delete:
+                       pass = mShared.getString("gesturePw","");
+                       Log.d("msg_pass",pass);
+                       if(pass.length()!=0) {
+                           showGuestModal(1);
+                       } else{Toast.makeText(MainActivity.this,"当前无手势密码",Toast.LENGTH_SHORT).show();}
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
                    case R.id.item1:
-                      // showGuestModal(0);
+                       showGuestModal(0);
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
                    case R.id.item2:
 //                       showGuestModal(0);
@@ -146,10 +167,20 @@ public class MainActivity extends AppCompatActivity {
                  super.onActivityResult(requestCode, resultCode, data);
                  //当otherActivity中返回数据的时候，会响应此方法
                  //requestCode和resultCode必须与请求startActivityForResult()和返回setResult()的时候传入的值一致。
-                 if(requestCode==1&&resultCode==2)
+
+                    //删除手势
+                    if(requestCode==1&&resultCode==2)
                      {
-                         int three=data.getIntExtra("result", 0);
-                         Log.d("msg_result",String.valueOf(three));
+                         int result=data.getIntExtra("result", 0);
+                         if(result==1){
+                             SharedPreferences sharedPref = getSharedPreferences("share_data", MODE_PRIVATE);
+                             //打开SharedPreferences的编辑状态
+                             SharedPreferences.Editor editor = sharedPref.edit();
+                             //存储数据，用户名，键值对的形式
+                             editor.putString("gesturePw", "");
+                             //提交，保存数据
+                             editor.apply();
+                         }
                      }
              }
 

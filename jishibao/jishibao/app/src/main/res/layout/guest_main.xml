@@ -14,11 +14,11 @@
         android:gravity="center_horizontal"
         android:padding="50dp">
         <TextView
+            android:id="@+id/tipsText"
             android:textColor="#434242"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:text="绘制图案"
             android:paddingBottom="10dp"/>
         <com.gestruelock.IndicatorLockView
             android:id="@+id/lockviewIndicator"
