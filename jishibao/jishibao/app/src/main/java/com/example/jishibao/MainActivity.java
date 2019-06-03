@@ -1,9 +1,13 @@
 package com.example.jishibao;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 import com.example.jishibao.GuestActivity;
 
@@ -60,7 +66,33 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.main_recyclerview);
         StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        ItemAdapter adapter=new ItemAdapter(itemList);
+        final ItemAdapter adapter=new ItemAdapter(itemList);
+        adapter.setOnremoveListnner(new ItemAdapter.OnremoveListnner() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void ondelect(final int x) {
+                    //弹出一个dialog，用用户选择是否删除
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    AlertDialog alertDialog = builder.setTitle("系统提示：")
+                            .setMessage("确定要删除该便签吗？")
+                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            })
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    itemList.remove(x);
+                                    adapter.notifyDataSetChanged();
+                                    Toast.makeText(MainActivity.this,"已成功删除第"+(x+1)+"个元素",Toast.LENGTH_SHORT).show();
+                                    //后台删除列表
+                                }
+                            }).create();
+                    alertDialog.show();
+            }
+        });
         recyclerView.setAdapter(adapter);
         NavigationView navigationView=(NavigationView)findViewById(R.id.navigation);
         navigationView.setCheckedItem(R.id.setting);
