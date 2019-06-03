@@ -14,6 +14,16 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private List<Item> mItemList;
 
+    public interface OnremoveListnner{
+        void  ondelect(int i);
+    }
+
+    private OnremoveListnner onremoveListnner;
+
+    public void setOnremoveListnner(OnremoveListnner onremoveListnner) {
+        this.onremoveListnner = onremoveListnner;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -32,10 +42,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-Item item=mItemList.get(i);
-viewHolder.title.setText(item.getTitle());
-viewHolder.body.setText(item.getBody());
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+        Item item=mItemList.get(i);
+        viewHolder.title.setText(item.getTitle());
+        viewHolder.body.setText(item.getBody());
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                if (onremoveListnner!=null){
+                    onremoveListnner.ondelect(i);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -60,5 +80,7 @@ viewHolder.body.setText(item.getBody());
 public ItemAdapter(List<Item> itemList){
         mItemList=itemList;
 }
+
+
 
 }
