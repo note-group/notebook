@@ -71,7 +71,7 @@ import java.util.Map;
 * b.调用a中Note对象的RemoveBitmap(int)方法，需要传入图片ID，即可移除图片
 *
 **************************** 注意事项 **********************************
-* 1：程序终止前，请在主活动的onDestroy方法中调用NoteManager对象的SaveNote方法。
+* 1：程序终止前，请在主活动的onDestroy方法中调用NoteManager对象的SaveAllNote方法。
 *       否则，所有的图片/文字/视频/音频/元数据都不会保存。
 * 2：在程序运行时，应保证NoteManager对象全局唯一！
 * 3：NoteManager的初始化工作必须在成功获取权限之后执行！
@@ -265,5 +265,15 @@ public class NoteManager
     public void StopVideo()
     {
         player.stop();
+    }
+    //上传
+    public void Upload()
+    {
+
+    }
+    //下载
+    public void Download()
+    {
+
     }
 }

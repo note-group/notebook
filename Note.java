@@ -143,9 +143,17 @@ public class Note
     }
     public void RemoveBitmap(int ID)
     {
+        //获取
+        PICTURE delp=picture.get(ID);
+        //若源文件存在则删除
+        File fp=new File(delp.getPath());
+        if(fp.exists())
+        {
+            fp.delete();
+        }
         //删除
         picture.remove(ID);
-        //更新ID
+        //重排ID
         int i=0;
         while(i<picture.size())
         {
@@ -188,9 +196,17 @@ public class Note
     //删除录音
     public void RemoveAutdioRecord(int ID)
     {
+        //获取
+        SOUND dels=sound.get(ID);
+        //若文件存在则删除
+        File fs=new File(dels.getName());
+        if(fs.exists())
+        {
+            fs.delete();
+        }
         //删除
         sound.remove(ID);
-        //更新ID
+        //重排ID
         int i=0;
         while(i<sound.size())
         {
@@ -288,6 +304,10 @@ public class Note
             i++;
         }
         return re;
+    }
+    int getBitmapNum()
+    {
+        return picture.size();
     }
 }
 
