@@ -79,7 +79,8 @@ import java.util.Map;
 */
 public class NoteManager
 {
-    private static String metapath="/storage/emulated/0/note.txt";
+    private static String metapath="/storage/emulated/0/note.txt";  //路径文件
+    private static String loadpath="";
     //path:全局存储路径.在设置中更改
     public static String path;       // 存储路径
     public static RThread reth;      //录音线程/播放线程
@@ -245,6 +246,14 @@ public class NoteManager
     public static String getMetaPath()
     {
         return metapath;
+    }
+    public static void setMetaPath(String MetaPath)
+    {
+        metapath=MetaPath;
+    }
+    public static String getLoadPath()
+    {
+        return loadpath;
     }
     //将视频画面输出至SurfaceView.需要提供一个SurfaceView控件
     public void SetVideoTarget(SurfaceView Target)

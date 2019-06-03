@@ -252,7 +252,40 @@ public class Note
     //删除与本便签相关的所有文件
     public void Delete()
     {
-
+        //删除所有图片
+        int pnum=picture.size();
+        int i=0;
+        while(i<pnum)
+        {
+            PICTURE p=picture.get(0);
+            File fp=new File(p.getPath());
+            if(fp.exists())
+            {
+                fp.delete();
+            }
+            picture.remove(0);
+            i++;
+        }
+        i=0;
+        int snum=sound.size();
+        //删除所有音频
+        while(i<snum)
+        {
+            SOUND s=sound.get(0);
+            File fs=new File(s.getName());
+            if(fs.exists())
+            {
+                fs.delete();
+            }
+            sound.remove(0);
+            i++;
+        }
+        //删除所有文本
+        File ft=new File(NoteManager.path+"/"+title+".txt");
+        if(ft.exists())
+        {
+            ft.delete();
+        }
     }
     //转为元字符串
     public String toString()
