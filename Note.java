@@ -64,7 +64,8 @@ public class Note
             PICTURE p=picture.get(i);
             File pf=new File(p.getPath());
             try {
-                if (pf.exists()) {
+                if (pf.exists())
+                {
                     if(!pf.delete())
                     {
                         throw new Exception("原文件"+p.getPath()+"删除失败!");

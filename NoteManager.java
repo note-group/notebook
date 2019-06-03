@@ -13,6 +13,7 @@ import android.view.SurfaceView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -70,6 +71,12 @@ import java.util.Map;
 * (如果你已经拥有了Note对象，则步骤a可以省略)
 * b.调用a中Note对象的RemoveBitmap(int)方法，需要传入图片ID，即可移除图片
 *
+* 7.上传文件
+* a.调用NoteManager对象的Upload方法
+*
+* 8.下载文件
+* a.调用NoteManager对象的Download方法
+*
 **************************** 注意事项 **********************************
 * 1：程序终止前，请在主活动的onDestroy方法中调用NoteManager对象的SaveAllNote方法。
 *       否则，所有的图片/文字/视频/音频/元数据都不会保存。
@@ -80,7 +87,7 @@ import java.util.Map;
 public class NoteManager
 {
     private static String metapath="/storage/emulated/0/note.txt";  //路径文件
-    private static String loadpath="";
+    private static String loadpath="/storage/emulated/0/notedata";  //上传路径
     //path:全局存储路径.在设置中更改
     public static String path;       // 存储路径
     public static RThread reth;      //录音线程/播放线程
@@ -232,6 +239,8 @@ public class NoteManager
                 Note n = e.getValue();
                 //写入元数据
                 fouts.write(n.toString().getBytes());
+                //保存
+                n.Save();
             }
             fouts.flush();
             fouts.close();
@@ -276,13 +285,121 @@ public class NoteManager
         player.stop();
     }
     //上传
-    public void Upload()
+    public boolean Upload()
     {
-
+        //检查目标文件夹是否存在：
+        File dload=new File(loadpath);
+        if(!dload.exists())
+        {
+            if(!dload.mkdir())
+            {
+                return false;
+            }
+        }
+        //打开原目录：
+        File dorg=new File(NoteManager.path);
+        if(!dorg.exists())
+        {
+            return false;
+        }
+        //获取原目录下所有文件：
+        File[] forg=dorg.listFiles();
+        int i=0;
+        while(i<forg.length)
+        {
+            try
+            {
+                File fload = new File(loadpath + "/" + forg[i].getName());
+                if (!fload.exists())
+                {
+                    if(!fload.createNewFile())
+                    {
+                        return false;
+                    }
+                }
+                //复制文件
+                FileInputStream fins=new FileInputStream(forg[i].getAbsolutePath());
+                FileOutputStream fouts=new FileOutputStream(fload.getAbsolutePath());
+                byte[] buffer=new byte[4096];
+                int re=fins.read(buffer,0,4096);
+                while(re!=-1)
+                {
+                    fouts.write(buffer,0,re);
+                    re=fins.read(buffer,0,4096);
+                }
+                fouts.flush();
+                fouts.close();
+                fins.close();
+            }catch(IOException ioe)
+            {
+                ioe.printStackTrace();
+                return false;
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+            i++;
+        }
+        return true;
     }
     //下载
-    public void Download()
+    public boolean Download()
     {
-
+        //检查目标文件夹是否存在：
+        File dload=new File(loadpath);
+        if(!dload.exists()||!dload.isDirectory())
+        {
+            return false;
+        }
+        //检查原存储文件夹是否存在：
+        File dorg=new File(NoteManager.path);
+        if(!dorg.exists())
+        {
+            return false;
+        }
+        File[] fload=dload.listFiles();
+        int i=0;
+        while(i<fload.length)
+        {
+            try
+            {
+                File fnew=new File(NoteManager.path+"/"+fload[i].getName());
+                if(fnew.exists())
+                {
+                    i++;
+                    continue;
+                }
+                else
+                {
+                    if(!fnew.createNewFile())
+                    {
+                        return false;
+                    }
+                }
+                FileInputStream fins=new FileInputStream(fload[i]);
+                FileOutputStream fouts=new FileOutputStream(fnew);
+                byte[] buffer=new byte[4096];
+                int re=fins.read(buffer,0,4096);
+                while(re!=-1)
+                {
+                    fouts.write(buffer,0,re);
+                    re=fins.read(buffer,0,4096);
+                }
+                fouts.flush();
+                fouts.close();
+                fins.close();
+            }catch(IOException ioe)
+            {
+                ioe.printStackTrace();
+                return false;
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+                return false;
+            }
+            i++;
+        }
+        return true;
     }
 }
