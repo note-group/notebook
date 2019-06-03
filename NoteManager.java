@@ -159,6 +159,19 @@ public class NoteManager
     {
         return notedata.get(Title);
     }
+    //获取所有笔记数据
+    public ArrayList<Note> getNoteList()
+    {
+        ArrayList<Note> notelist=new ArrayList<Note>();
+        Iterator<HashMap.Entry<String, Note>> i = notedata.entrySet().iterator();
+        while (i.hasNext())
+        {
+            HashMap.Entry<String, Note> e = (HashMap.Entry<String, Note>) i.next();
+            Note n = e.getValue();
+            notelist.add(n);
+        }
+        return notelist;
+    }
     //在程序开始时，请调用该函数完成初始化
     public void Init()
     {
