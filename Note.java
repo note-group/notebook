@@ -343,6 +343,7 @@ public class Note
     {
         return picture.size();
     }
+    int getSoundNum(){return sound.size();}
 }
 
 //图片类

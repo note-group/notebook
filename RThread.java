@@ -64,7 +64,6 @@ public class RThread extends Thread implements Runnable
             {
                 try
                 {
-                    fins=new FileInputStream(filepath);
                     byte[] temps=new byte[NoteManager.tracksize];
                     if(fins.available()>0)
                     {
@@ -86,6 +85,7 @@ public class RThread extends Thread implements Runnable
     public void StartRecord()
     {
         bplayvideo=true;
+        data.clear();
     }
     //结束录音
     public void StopRecord()
@@ -176,6 +176,12 @@ public class RThread extends Thread implements Runnable
     public void StartMusic()
     {
         bplaysound=true;
+        try {
+            fins = new FileInputStream(filepath);
+        }catch(IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
     }
     public void StopMusic()
     {
