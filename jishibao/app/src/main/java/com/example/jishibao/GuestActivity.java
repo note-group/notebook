@@ -37,8 +37,6 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
         mode=intent.getIntExtra("mode",0);
         first=intent.getIntExtra("first",0);
         type=intent.getIntExtra("type",0);
-        Log.d("step_type",String.valueOf(mode));
-          Log.d("msg_mode",String.valueOf(type));
         setContentView(R.layout.password_main);
         mLockviewExpand = (ExpandLockView) findViewById(R.id.lockviewExpand);
         tvMessage = (TextView) findViewById(R.id.tvMessage);
@@ -115,7 +113,7 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
     //解开密码锁成功
     @Override
     public void onOpenLock() {
-        Toast.makeText(this, "成功解锁", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "密码配对成功", Toast.LENGTH_SHORT).show();
         onFinish(1);
         finish();
     }
@@ -132,14 +130,10 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
     }
 
     public void onFinish(int result){
-        Log.d("step_mode1",String.valueOf(type));
         if(type==1) {
-            Log.d("step","step1");
             Intent i = new Intent();
-            Log.d("step","step2");
             i.putExtra("result", result);
             setResult(2, i);//设置resultCode，onActivityResult()中能获取到
-            Log.d("step","step3");
         }
     }
 }

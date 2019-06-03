@@ -4,70 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-android:background="#e0ffff"
+    android:background="#e0ffff"
     tools:context=".MainActivity">
-<android.support.v4.widget.DrawerLayout
-    android:id="@+id/drawerlayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerlayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        android:layout_height="match_parent">
+        <com.yalantis.phoenix.PullToRefreshView
+            android:id="@+id/pull_to_refresh"
             android:layout_width="match_parent"
-
-            android:layout_height="0dp"
-            android:layout_weight="1"
-android:orientation="vertical">
-            <SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:iconifiedByDefault="false"
-                android:background="#bababa"
-
-                android:queryHint="搜索内容"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/main_recyclerview"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginBottom="-60dp"/>
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floating"
-                android:layout_width="wrap_content"
-                android:layout_height="81dp"
-                android:layout_gravity="end|bottom"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
-                android:foregroundGravity="center"
-                android:src="@mipmap/pen"
-                app:backgroundTint="@android:color/background_light" />
-        </LinearLayout>
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <SearchView
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:iconifiedByDefault="false"
+                        android:background="#bababa"
+
+                        android:queryHint="搜索内容"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/main_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="-60dp"/>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/floating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="81dp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:foregroundGravity="center"
+                        android:src="@mipmap/pen"
+                        app:backgroundTint="@android:color/background_light" />
+                </LinearLayout>
 
 
-    </LinearLayout>
+            </LinearLayout>
+        </com.yalantis.phoenix.PullToRefreshView>
+        <android.support.design.widget.NavigationView
 
-    <android.support.design.widget.NavigationView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/navigation"
+            android:layout_gravity="start"
+            app:menu="@menu/nav_menu"
+            app:headerLayout="@layout/nav_header"
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/navigation"
-        android:layout_gravity="start"
-        app:menu="@menu/nav_menu"
-        app:headerLayout="@layout/nav_header"
+            android:background="#b2dfee"
+            >
 
-android:background="#b2dfee"
-        >
-
-    </android.support.design.widget.NavigationView>
-</android.support.v4.widget.DrawerLayout>
+        </android.support.design.widget.NavigationView>
+    </android.support.v4.widget.DrawerLayout>
 
 
 </android.support.constraint.ConstraintLayout>

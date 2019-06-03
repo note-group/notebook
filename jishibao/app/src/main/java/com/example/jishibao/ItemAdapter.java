@@ -51,10 +51,20 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
 Item item=mItemList.get(i);
 viewHolder.title.setText(item.getTitle());
 viewHolder.body.setText(item.getBody());
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                if (onremoveListnner!=null){
+                    onremoveListnner.ondelect(i);
+                }
+                return true;
+            }
+        });
     }
 
     @Override

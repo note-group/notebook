@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.yalantis.phoenix.PullToRefreshView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton floatingActionButton;
     private SharedPreferences mShared;
     private String pass;
+    private PullToRefreshView mPullToRefreshView;
+    private DBHelper DBHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +75,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         dbHelper=new DBHelper(this,"Book.db",null,1);
            initItem();
-
+        mPullToRefreshView = (PullToRefreshView) findViewById(R.id.pull_to_refresh);
+        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPullToRefreshView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleFresh();
+                        mPullToRefreshView.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.clearFocus();
         mSearchView.setFocusable(false);
@@ -100,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                                 adapter.notifyDataSetChanged();
                                 Toast.makeText(MainActivity.this,"已成功删除第"+(x+1)+"个元素",Toast.LENGTH_SHORT).show();
                                 //后台删除列表
+                                deleteItem(x);
                             }
                         }).create();
                 alertDialog.show();
@@ -187,16 +204,26 @@ startActivity(intent);
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.e("refresh", "onRestart()");
+        this.handleFresh();
+    }
 
+    private void deleteItem(int i){
+        SQLiteDatabase db = DBHelper.getWritableDatabase();
+        db.delete("Book","title = ?",new String []{ itemList.get(i).getTitle()});
+    }
 
-    private void initItem()
+        private void initItem()
     {
         SQLiteDatabase db=dbHelper.getWritableDatabase();
        Cursor cursor=db.query("Book",null,null,null,null,null,null);
         if(cursor.moveToFirst())
         {
             do{
-                Item item1=new Item(""+Html.fromHtml(cursor.getString(cursor.getColumnIndex("title"))),""+Html.fromHtml(cursor.getString(cursor.getColumnIndex("title"))));
+                Item item1=new Item(""+Html.fromHtml(cursor.getString(cursor.getColumnIndex("title"))),""+Html.fromHtml(cursor.getString(cursor.getColumnIndex("body"))));
                 itemList.add(item1);
             }while(cursor.moveToNext());
         }
@@ -221,24 +248,45 @@ startActivity(intent);
             itemList.add(item8);
             Item item9=new Item("1","999999999999999111111111111111111111111111111111111111111111111111111111111111111111111111111111111111199");
             itemList.add(item9);
-            Item item10=new Item("1","1231232312312312");
-            itemList.add(item10);
-            Item item11=new Item("1","1111111fffdsad111111111");
-            itemList.add(item11);
-            Item item12=new Item("1","11111111111111111111");
-            itemList.add(item12);
-            Item item13=new Item("1","111111111aaas11111111111111");
-            itemList.add(item13);
-            Item item14=new Item("1","1111111111asdfsadf111111111");
-            itemList.add(item14);
-            Item item15=new Item("1","111111111111111111111111");
-            itemList.add(item15);
-            Item item16=new Item("1","111111111111111111111111");
-            itemList.add(item16);
             Item item17=new Item("1","11114562434asdf sadfsdaf11111");
             itemList.add(item17);*/
 
 
+    }
+
+    private void handleFresh(){
+        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.main_recyclerview);
+        itemList=new ArrayList<>();
+        initItem();
+        final ItemAdapter adapter=new ItemAdapter(itemList);
+        adapter.setOnremoveListnner(new ItemAdapter.OnremoveListnner() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void ondelect(final int x) {
+                //弹出一个dialog，用用户选择是否删除
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                AlertDialog alertDialog = builder.setTitle("系统提示：")
+                        .setMessage("确定要删除该便签吗？")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                itemList.remove(x);
+                                adapter.notifyDataSetChanged();
+                                Toast.makeText(MainActivity.this,"已成功删除第"+(x+1)+"个元素",Toast.LENGTH_SHORT).show();
+                                //后台删除列表
+                                deleteItem(x);
+                            }
+                        }).create();
+                alertDialog.show();
+            }
+        });
+        recyclerView.setAdapter(adapter);
     }
 
     public void showGuestModal(int i){
