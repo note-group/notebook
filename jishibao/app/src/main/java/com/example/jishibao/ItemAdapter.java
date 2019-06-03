@@ -18,6 +18,16 @@ import static android.support.v4.content.ContextCompat.startActivity;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private List<Item> mItemList;
 
+    public interface OnremoveListnner{
+        void  ondelect(int i);
+    }
+
+    private OnremoveListnner onremoveListnner;
+
+    public void setOnremoveListnner(OnremoveListnner onremoveListnner) {
+        this.onremoveListnner = onremoveListnner;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

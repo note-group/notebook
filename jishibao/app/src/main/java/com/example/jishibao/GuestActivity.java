@@ -1,9 +1,7 @@
 package com.example.jishibao;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +12,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gestruelock.*;
+import com.gestruelock.ExpandLockView;
+import com.gestruelock.IndicatorLockView;
 
 public class GuestActivity extends AppCompatActivity implements ExpandLockView.OnLockPanelListener, ExpandLockView.OnUpdateIndicatorListener, ExpandLockView.OnUpdateMessageListener, ExpandLockView.OnFinishDrawPasswordListener {
 
@@ -26,6 +25,7 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
     private Vibrator mVibrator;
     private int first;
     private int mode;
+    private int type;
     //返回信息如果是正确的
     private String succeeMsg="再次输入密码,密码已设置,密码正确,密码正确,请输入新密码";
 
@@ -36,7 +36,9 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
         //getXxxExtra方法获取Intent传递过来的数据
         mode=intent.getIntExtra("mode",0);
         first=intent.getIntExtra("first",0);
-          Log.d("msg_mode",String.valueOf(mode));
+        type=intent.getIntExtra("type",0);
+        Log.d("step_type",String.valueOf(mode));
+          Log.d("msg_mode",String.valueOf(type));
         setContentView(R.layout.password_main);
         mLockviewExpand = (ExpandLockView) findViewById(R.id.lockviewExpand);
         tvMessage = (TextView) findViewById(R.id.tvMessage);
@@ -130,8 +132,14 @@ public class GuestActivity extends AppCompatActivity implements ExpandLockView.O
     }
 
     public void onFinish(int result){
-        Intent i = new Intent();
-        i.putExtra("result", result);
-        setResult(2, i);//设置resultCode，onActivityResult()中能获取到
+        Log.d("step_mode1",String.valueOf(type));
+        if(type==1) {
+            Log.d("step","step1");
+            Intent i = new Intent();
+            Log.d("step","step2");
+            i.putExtra("result", result);
+            setResult(2, i);//设置resultCode，onActivityResult()中能获取到
+            Log.d("step","step3");
+        }
     }
 }

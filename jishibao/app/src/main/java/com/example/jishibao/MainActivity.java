@@ -1,17 +1,23 @@
 package com.example.jishibao;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -20,15 +26,48 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private DBHelper dbHelper;
     private List<Item> itemList=new ArrayList<>();
     private SearchView mSearchView;
     private FloatingActionButton floatingActionButton;
+    private SharedPreferences mShared;
+    private String pass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mShared = getSharedPreferences("share_data", MODE_PRIVATE);
+        String desc = "共享参数中保存的信息如下：";
+        Map<String, Object> mapParam = (Map<String, Object>) mShared.getAll();
+        for (Map.Entry<String, Object> item_map : mapParam.entrySet()) {
+            String key = item_map.getKey();
+            Object value = item_map.getValue();
+            if (value instanceof String) {
+                desc = String.format("%s\n　%s的取值为%s", desc, key,
+                        mShared.getString(key, ""));
+            } else if (value instanceof Integer) {
+                desc = String.format("%s\n　%s的取值为%d", desc, key, mShared.getInt(key, 0));
+            } else if (value instanceof Float) {
+                desc = String.format("%s\n　%s的取值为%f", desc, key, mShared.getFloat(key, 0.0f));
+            } else if (value instanceof Boolean) {
+                desc = String.format("%s\n　%s的取值为%b", desc, key, mShared.getBoolean(key, false));
+            } else if (value instanceof Long) {
+                desc = String.format("%s\n　%s的取值为%d", desc, key, mShared.getLong(key, 0l));}
+            else {
+                desc = String.format("%s\n参数%s的取值为未知类型", desc, key);
+            }
+        }
+        Log.d("msg_desc",desc);
+        pass = mShared.getString("gesturePw","");
+        Log.d("msg_pass",pass);
+        if(pass.length()!=0) {
+            Intent intent = new Intent(MainActivity.this,GuestActivity.class);
+            intent.putExtra("mode",1);
+            intent.putExtra("first",1);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_main);
         dbHelper=new DBHelper(this,"Book.db",null,1);
            initItem();
@@ -39,7 +78,33 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.main_recyclerview);
         StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        ItemAdapter adapter=new ItemAdapter(itemList);
+        final ItemAdapter adapter=new ItemAdapter(itemList);
+        adapter.setOnremoveListnner(new ItemAdapter.OnremoveListnner() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void ondelect(final int x) {
+                //弹出一个dialog，用用户选择是否删除
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                AlertDialog alertDialog = builder.setTitle("系统提示：")
+                        .setMessage("确定要删除该便签吗？")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                itemList.remove(x);
+                                adapter.notifyDataSetChanged();
+                                Toast.makeText(MainActivity.this,"已成功删除第"+(x+1)+"个元素",Toast.LENGTH_SHORT).show();
+                                //后台删除列表
+                            }
+                        }).create();
+                alertDialog.show();
+            }
+        });
         recyclerView.setAdapter(adapter);
         EditText editText;
 
@@ -63,8 +128,29 @@ public class MainActivity extends AppCompatActivity {
                switch (menuItem.getItemId())
                {
                    case R.id.setting:
-                       //Intent intent=new Intent(MainActivity.this,SettingsActivity.class);
-                      // startActivity(intent);
+                       pass = mShared.getString("gesturePw","");
+                       Log.d("msg_pass",pass);
+                       if(pass.length()==0) {
+                           showGuestModal(0);
+                           Toast.makeText(MainActivity.this,"手势设置",Toast.LENGTH_SHORT).show();
+                       }else{Toast.makeText(MainActivity.this,"手势密码已存在",Toast.LENGTH_SHORT).show();}
+                       break;
+                   case R.id.update:
+                       pass = mShared.getString("gesturePw","");
+                       Log.d("msg_pass",pass);
+                       if(pass.length()!=0) {
+                           showGuestModal(0);
+                           showGuestModal(1);
+                           Toast.makeText(MainActivity.this,"手势修改",Toast.LENGTH_SHORT).show();  break;
+                       }
+                       else{Toast.makeText(MainActivity.this,"当前无手势密码",Toast.LENGTH_SHORT).show();}
+                   case R.id.delete:
+                       pass = mShared.getString("gesturePw","");
+                       Log.d("msg_pass",pass);
+                       if(pass.length()!=0) {
+                           showGuestModal(3);
+                           Toast.makeText(MainActivity.this,"手势删除",Toast.LENGTH_SHORT).show();
+                       } else{Toast.makeText(MainActivity.this,"当前无手势密码",Toast.LENGTH_SHORT).show();}
                        break;
                    case R.id.item1:
                        Toast.makeText(MainActivity.this,"setting clicked",Toast.LENGTH_SHORT).show();  break;
@@ -154,4 +240,37 @@ startActivity(intent);
 
 
     }
+
+    public void showGuestModal(int i){
+        Intent intent = new Intent(MainActivity.this,GuestActivity.class);
+        if(i==3){
+            intent.putExtra("mode",1);
+            intent.putExtra("type",1);
+        }
+        else{intent.putExtra("mode",i);}
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //当otherActivity中返回数据的时候，会响应此方法
+        //requestCode和resultCode必须与请求startActivityForResult()和返回setResult()的时候传入的值一致。
+
+        //删除手势
+        if(requestCode==1&&resultCode==2)
+        {
+            int result=data.getIntExtra("result", 0);
+            if(result==1){
+                SharedPreferences sharedPref = getSharedPreferences("share_data", MODE_PRIVATE);
+                //打开SharedPreferences的编辑状态
+                SharedPreferences.Editor editor = sharedPref.edit();
+                //存储数据，用户名，键值对的形式
+                editor.putString("gesturePw", "");
+                //提交，保存数据
+                editor.apply();
+            }
+        }
+    }
+
 }
